@@ -100,6 +100,7 @@ RUN dnf -y install --best --nodocs --setopt=install_weak_deps=False dnf-plugins-
         screen \
         tar \
         git \
+        gcc \
     && dnf clean all \
     && ${PYTHON} -m venv --upgrade-deps ${VIRTUAL_ENV} \
     && mkdir -p ${HOME}

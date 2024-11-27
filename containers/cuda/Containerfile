@@ -178,9 +178,24 @@ RUN source ${VIRTUAL_ENV}/bin/activate \
     && if [ "${INSTRUCTLAB_VERSION}" != "" ] ; then \
         INSTRUCTLAB_PKG="${INSTRUCTLAB_PKG}==${INSTRUCTLAB_VERSION}" ; \
     fi \
-    && pip install torch psutil \
-    && pip install flash-attn --no-build-isolation \
-    && pip install "${INSTRUCTLAB_PKG}" -C cmake.args="-DLLAMA_CUDA=on" -C cmake.args="-DLLAMA_NATIVE=off" \
+    && pip install torch psutil
+
+RUN source ${VIRTUAL_ENV}/bin/activate \
+    && if [ "${INSTRUCTLAB_VERSION}" != "" ] ; then \
+        INSTRUCTLAB_PKG="${INSTRUCTLAB_PKG}==${INSTRUCTLAB_VERSION}" ; \
+    fi \
+    && pip install flash_attn --no-build-isolation
+
+RUN source ${VIRTUAL_ENV}/bin/activate \
+    && if [ "${INSTRUCTLAB_VERSION}" != "" ] ; then \
+        INSTRUCTLAB_PKG="${INSTRUCTLAB_PKG}==${INSTRUCTLAB_VERSION}" ; \
+    fi \
+    && pip install "${INSTRUCTLAB_PKG}" -C cmake.args="-DLLAMA_CUDA=on" -C cmake.args="-DLLAMA_NATIVE=off"
+
+RUN source ${VIRTUAL_ENV}/bin/activate \
+    && if [ "${INSTRUCTLAB_VERSION}" != "" ] ; then \
+        INSTRUCTLAB_PKG="${INSTRUCTLAB_PKG}==${INSTRUCTLAB_VERSION}" ; \
+    fi \
     && pip install vllm@git+https://github.com/opendatahub-io/vllm@v0.6.2
 
 ENV TORCH_HOME="${VIRTUAL_ENV}/lib64/${PYTHON}/site-packages/torch"

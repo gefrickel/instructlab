@@ -124,6 +124,11 @@ RUN dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-${O
 
 ENV PATH=/root/.local/bin:${PATH}
 
+# Add NVIDIA repo for CUDA libraries
+RUN if [ "$(arch)" == "aarch64" ] ; then CUDA_REPO_ARCH="sbsa" ; else CUDA_REPO_ARCH=$(arch) ; fi \
+    && dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel${OS_VERSION_MAJOR}/${CUDA_REPO_ARCH}/cuda-rhel${OS_VERSION_MAJOR}.repo \
+    && dnf config-manager --set-enabled cuda-rhel9-${CUDA_REPO_ARCH}
+
 # Define global NVIDIA environment variables
 
 ENV _CUDA_COMPAT_PATH=/usr/local/cuda/compat

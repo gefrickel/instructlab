@@ -119,6 +119,32 @@ RUN dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-${O
 
 ENV PATH=/root/.local/bin:${PATH}
 
+# Define global NVIDIA environment variables
+
+ENV _CUDA_COMPAT_PATH=/usr/local/cuda/compat
+ENV CUDA_CACHE_DISABLE=1
+ENV CUDA_HOME="/usr/local/cuda"
+ENV CUDA_MODULE_LOADING="LAZY"
+ENV CUDA_SELECT_NVCC_ARCH_FLAGS=${TORCH_CUDA_ARCH_LIST}
+ENV CUDA_VERSION=${CUDA_VERSION}
+ENV LIBRARY_PATH="/usr/local/cuda/lib64/stubs"
+ENV NCCL_WORK_FIFO_DEPTH=4194304
+ENV NUMBA_CUDA_DRIVER="/usr/lib64/libcuda.so.1"
+ENV NVIDIA_CPU_ONLY=1
+ENV NVIDIA_DRIVER_CAPABILITIES="compute,utility,video"
+ENV NVIDIA_REQUIRE_CUDA=cuda>=9.0
+ENV NVIDIA_REQUIRE_JETPACK_HOST_MOUNTS=""
+ENV NVIDIA_VISIBLE_DEVICES="all"
+ENV USE_EXPERIMENTAL_CUDNN_V8_API=1
+
+ENV PATH="${CUDA_HOME}/bin:${PATH}"
+ENV LD_LIBRARY_PATH="${CUDA_HOME}/compat:${CUDA_HOME}/lib64:${CUDA_HOME}/lib64/stubs:${LD_LIBRARY_PATH}"
+ENV LIBRARY_PATH="${CUDA_HOME}/compat:${CUDA_HOME}/lib64:${CUDA_HOME}/lib64/stubs:${LIBRARY_PATH}"
+ENV CMAKE_LIBRARY_PATH="${CUDA_HOME}/compat:${CUDA_HOME}/lib64:${CUDA_HOME}/lib64/stubs:${CMAKE_LIBRARY_PATH}"
+ENV C_INCLUDE_PATH="${CUDA_HOME}/include:${C_INCLUDE_PATH}"
+ENV CPLUS_INCLUDE_PATH="${CUDA_HOME}/include:${CPLUS_INCLUDE_PATH}"
+ENV CMAKE_INCLUDE_PATH="${CUDA_HOME}/include:${CMAKE_INCLUDE_PATH}"
+
 # Install Intel oneAPI repository for Intel oneMKL
 COPY containers/cuda/intel-oneapi.repo /etc/yum.repos.d/oneapi.repo
 RUN dnf config-manager --set-enabled intel-oneapi

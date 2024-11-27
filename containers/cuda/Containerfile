@@ -186,12 +186,6 @@ RUN source ${VIRTUAL_ENV}/bin/activate \
     && if [ "${INSTRUCTLAB_VERSION}" != "" ] ; then \
         INSTRUCTLAB_PKG="${INSTRUCTLAB_PKG}==${INSTRUCTLAB_VERSION}" ; \
     fi \
-    && pip install flash_attn --no-build-isolation
-
-RUN source ${VIRTUAL_ENV}/bin/activate \
-    && if [ "${INSTRUCTLAB_VERSION}" != "" ] ; then \
-        INSTRUCTLAB_PKG="${INSTRUCTLAB_PKG}==${INSTRUCTLAB_VERSION}" ; \
-    fi \
     && pip install "${INSTRUCTLAB_PKG}" -C cmake.args="-DLLAMA_CUDA=on" -C cmake.args="-DLLAMA_NATIVE=off"
 
 RUN source ${VIRTUAL_ENV}/bin/activate \
@@ -250,6 +244,12 @@ ENV CMAKE_LIBRARY_PATH="${PYTORCH_VISION_HOME}/lib:${CMAKE_LIBRARY_PATH}"
 ENV C_INCLUDE_PATH="${PYTORCH_VISION_HOME}/include:${C_INCLUDE_PATH}"
 ENV CPLUS_INCLUDE_PATH="${PYTORCH_VISION_HOME}/include:${CPLUS_INCLUDE_PATH}"
 ENV CMAKE_INCLUDE_PATH="${PYTORCH_VISION_HOME}/include:${CMAKE_INCLUDE_PATH}"
+
+RUN source ${VIRTUAL_ENV}/bin/activate \
+    && if [ "${INSTRUCTLAB_VERSION}" != "" ] ; then \
+        INSTRUCTLAB_PKG="${INSTRUCTLAB_PKG}==${INSTRUCTLAB_VERSION}" ; \
+    fi \
+    && pip install flash_attn --no-build-isolation
 
 WORKDIR /instructlab
 ENTRYPOINT ["/bin/bash"]

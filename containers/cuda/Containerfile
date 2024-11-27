@@ -249,6 +249,12 @@ RUN source ${VIRTUAL_ENV}/bin/activate \
     && if [ "${INSTRUCTLAB_VERSION}" != "" ] ; then \
         INSTRUCTLAB_PKG="${INSTRUCTLAB_PKG}==${INSTRUCTLAB_VERSION}" ; \
     fi \
+    && pip install numpy
+
+RUN source ${VIRTUAL_ENV}/bin/activate \
+    && if [ "${INSTRUCTLAB_VERSION}" != "" ] ; then \
+        INSTRUCTLAB_PKG="${INSTRUCTLAB_PKG}==${INSTRUCTLAB_VERSION}" ; \
+    fi \
     && pip install flash_attn --no-build-isolation
 
 WORKDIR /instructlab

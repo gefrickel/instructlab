@@ -93,6 +93,7 @@ RUN dnf -y install --best --nodocs --setopt=install_weak_deps=False dnf-plugins-
         wget \
         which \
         lmdb \
+        gcc-c++ \
     && dnf clean all \
     && ${PYTHON} -m venv --upgrade-deps ${VIRTUAL_ENV} \
     && mkdir -p ${HOME}

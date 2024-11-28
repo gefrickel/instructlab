@@ -183,9 +183,9 @@ RUN source ${VIRTUAL_ENV}/bin/activate \
     && if [ "${INSTRUCTLAB_VERSION}" != "" ] ; then \
         INSTRUCTLAB_PKG="${INSTRUCTLAB_PKG}==${INSTRUCTLAB_VERSION}" ; \
     fi \
-    && pip install numpy \
+    && pip install https://github.com/Dao-AILab/flash-attention/releases/download/v2.7.0.post2/flash_attn-2.7.0.post2+cu12torch2.5cxx11abiTRUE-cp311-cp311-linux_x86_64.whl \
     && pip install torch psutil \
-    && pip install flash_attn --no-build-isolation \
+    # && pip install flash_attn --no-build-isolation \
     && pip install "${INSTRUCTLAB_PKG}" -C cmake.args="-DLLAMA_CUDA=on" -C cmake.args="-DLLAMA_NATIVE=off" \
     && pip install vllm@git+https://github.com/opendatahub-io/vllm@v0.6.2
 

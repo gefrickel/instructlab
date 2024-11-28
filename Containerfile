@@ -1,7 +1,7 @@
 # vim: syntax=dockerfile expandtab tabstop=4 shiftwidth=4
 
 ARG OS_VERSION_MAJOR=9
-ARG BASE_IMAGE=quay.io/centos/centos:stream${OS_VERSION_MAJOR}
+ARG BASE_IMAGE=quay.io/centos/centos:stream${OS_VERSION_MAJOR}-development
 
 FROM ${BASE_IMAGE}
 

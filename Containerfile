@@ -244,4 +244,6 @@ ENV CPLUS_INCLUDE_PATH="${PYTORCH_VISION_HOME}/include:${CPLUS_INCLUDE_PATH}"
 ENV CMAKE_INCLUDE_PATH="${PYTORCH_VISION_HOME}/include:${CMAKE_INCLUDE_PATH}"
 
 WORKDIR /instructlab
-ENTRYPOINT ["/bin/bash"]
+# ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/sh", "-c", "--" , "while true; do sleep 30; done;"]
+

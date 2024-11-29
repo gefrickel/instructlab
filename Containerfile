@@ -125,14 +125,14 @@ RUN if [ "$(arch)" == "aarch64" ] ; then CUDA_REPO_ARCH="sbsa" ; else CUDA_REPO_
     && dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel${OS_VERSION_MAJOR}/${CUDA_REPO_ARCH}/cuda-rhel${OS_VERSION_MAJOR}.repo \
     && dnf config-manager --set-enabled cuda-rhel9-${CUDA_REPO_ARCH}
 
-# RUN dnf install -y --nodocs \
+RUN dnf install -y --nodocs \
 #        cuda-compat-${CUDA_DASHED_VERSION} \
 #        cuda-minimal-build-${CUDA_DASHED_VERSION} \
 #        cuda-toolkit-${CUDA_DASHED_VERSION} \
-#        libcudnn${CUDNN_MAJOR_VERSION} \
+        libcudnn${CUDNN_MAJOR_VERSION} \
 #        libnccl \
 #        libcutensor2 \
-#    && dnf clean all \
+    && dnf clean all \
 #    && ln -s /usr/lib64/libcuda.so.1 /usr/lib64/libcuda.so
 
 # Define global NVIDIA environment variables

@@ -132,7 +132,7 @@ RUN dnf install -y --nodocs \
         libcudnn${CUDNN_MAJOR_VERSION} \
 #        libnccl \
 #        libcutensor2 \
-    && dnf clean all \
+    && dnf clean all
 #    && ln -s /usr/lib64/libcuda.so.1 /usr/lib64/libcuda.so
 
 # Define global NVIDIA environment variables

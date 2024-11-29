@@ -1,7 +1,7 @@
 # vim: syntax=dockerfile expandtab tabstop=4 shiftwidth=4
 
 ARG OS_VERSION_MAJOR=9
-ARG BASE_IMAGE=quay.io/centos/centos:stream${OS_VERSION_MAJOR}-development
+ARG BASE_IMAGE=quay.io/centos/centos:stream${OS_VERSION_MAJOR}
 
 FROM ${BASE_IMAGE}
 
@@ -93,7 +93,6 @@ RUN dnf -y install --best --nodocs --setopt=install_weak_deps=False dnf-plugins-
         wget \
         which \
         lmdb \
-        gcc-c++ \
     && dnf clean all \
     && ${PYTHON} -m venv --upgrade-deps ${VIRTUAL_ENV} \
     && mkdir -p ${HOME}
@@ -126,14 +125,14 @@ RUN if [ "$(arch)" == "aarch64" ] ; then CUDA_REPO_ARCH="sbsa" ; else CUDA_REPO_
     && dnf config-manager --set-enabled cuda-rhel9-${CUDA_REPO_ARCH}
 
 RUN dnf install -y --nodocs \
-#        cuda-compat-${CUDA_DASHED_VERSION} \
-#        cuda-minimal-build-${CUDA_DASHED_VERSION} \
-#        cuda-toolkit-${CUDA_DASHED_VERSION} \
+        cuda-compat-${CUDA_DASHED_VERSION} \
+        cuda-minimal-build-${CUDA_DASHED_VERSION} \
+        cuda-toolkit-${CUDA_DASHED_VERSION} \
         libcudnn${CUDNN_MAJOR_VERSION} \
-#        libnccl \
-#        libcutensor2 \
-    && dnf clean all
-#    && ln -s /usr/lib64/libcuda.so.1 /usr/lib64/libcuda.so
+        libnccl \
+        libcutensor2 \
+    && dnf clean all \
+    && ln -s /usr/lib64/libcuda.so.1 /usr/lib64/libcuda.so
 
 # Define global NVIDIA environment variables
 
@@ -180,16 +179,12 @@ ENV C_INCLUDE_PATH="${INTEL_MKL_HOME}/include:${C_INCLUDE_PATH}"
 ENV CPLUS_INCLUDE_PATH="${INTEL_MKL_HOME}/include:${CPLUS_INCLUDE_PATH}"
 ENV CMAKE_INCLUDE_PATH="${INTEL_MKL_HOME}/include:${CMAKE_INCLUDE_PATH}"
 
-# lets test this
-ENV LD_LIBRARY_PATH="/opt/app-root/lib/python3.11/site-packages/nvidia/cudnn/lib:${LD_LIBRARY_PATH}"
-
 RUN source ${VIRTUAL_ENV}/bin/activate \
     && if [ "${INSTRUCTLAB_VERSION}" != "" ] ; then \
         INSTRUCTLAB_PKG="${INSTRUCTLAB_PKG}==${INSTRUCTLAB_VERSION}" ; \
     fi \
-    && pip install https://github.com/Dao-AILab/flash-attention/releases/download/v2.7.0.post2/flash_attn-2.7.0.post2+cu12torch2.5cxx11abiTRUE-cp311-cp311-linux_x86_64.whl \
     && pip install torch psutil \
-    # && pip install flash_attn --no-build-isolation \
+    && pip install flash_attn --no-build-isolation \
     && pip install "${INSTRUCTLAB_PKG}" -C cmake.args="-DLLAMA_CUDA=on" -C cmake.args="-DLLAMA_NATIVE=off" \
     && pip install vllm@git+https://github.com/opendatahub-io/vllm@v0.6.2
 

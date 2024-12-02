@@ -5,11 +5,7 @@ ARG BASE_IMAGE=quay.io/centos/centos:stream${OS_VERSION_MAJOR}
 
 FROM ${BASE_IMAGE}
 
-ARG OS_VERSION_MAJOR=9
-
 ENV LD_LIBRARY_PATH=/usr/lib64:/usr/lib
-
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python3.11/site-packages/nvidia/cudnn/lib/
 
 ARG CUDA_VERSION=12.4.1
 ARG CUDA_DASHED_VERSION=12-4
@@ -162,8 +158,6 @@ ENV C_INCLUDE_PATH="${CUDA_HOME}/include:${C_INCLUDE_PATH}"
 ENV CPLUS_INCLUDE_PATH="${CUDA_HOME}/include:${CPLUS_INCLUDE_PATH}"
 ENV CMAKE_INCLUDE_PATH="${CUDA_HOME}/include:${CMAKE_INCLUDE_PATH}"
 
-RUN find / -name libcudnn.so.9
-
 # Install Intel oneAPI repository for Intel oneMKL
 COPY containers/cuda/intel-oneapi.repo /etc/yum.repos.d/oneapi.repo
 RUN dnf config-manager --set-enabled intel-oneapi
@@ -261,6 +255,4 @@ RUN curl -L -s \
     chmod +x /usr/local/bin/kubectl
 
 WORKDIR /instructlab
-# ENTRYPOINT ["/bin/bash"]
 ENTRYPOINT ["/bin/sh", "-c", "--" , "while true; do sleep 30; done;"]
-

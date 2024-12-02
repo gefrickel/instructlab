@@ -5,6 +5,8 @@ ARG BASE_IMAGE=quay.io/centos/centos:stream${OS_VERSION_MAJOR}
 
 FROM ${BASE_IMAGE}
 
+ARG OS_VERSION_MAJOR=9
+
 ENV LD_LIBRARY_PATH=/usr/lib64:/usr/lib
 
 ARG CUDA_VERSION=12.4.1

@@ -115,6 +115,7 @@ RUN dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-${O
         jemalloc \
         llvm14-libs \
         zeromq \
+        screen \
     && dnf clean all
 
 ENV PATH=/root/.local/bin:${PATH}

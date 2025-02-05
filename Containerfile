@@ -245,8 +245,8 @@ RUN dnf install -y nss_wrapper gettext tar gzip unzip git dnsutils skopeo wget i
 
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" ; \
     unzip awscliv2.zip ; \
-    mkdir /.aws ; \
-    chmod 777 /.aws ; \
+    mkdir ~/.aws ; \
+    chmod 777 ~/.aws ; \
     ./aws/install
 
 RUN curl https://rclone.org/install.sh | bash ; \

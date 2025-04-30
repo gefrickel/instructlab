@@ -22,6 +22,12 @@ on:
       - 'scripts/test-data/**'
       - 'src/instructlab/profiles/**'
       - '.github/workflows/e2e-nvidia-t4-x1.yml' # This workflow
+  workflow_dispatch:
+    inputs:
+      pr_or_branch:
+        description: 'pull request number or branch name'
+        required: true
+        default: 'main'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -144,11 +150,35 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch and checkout PR
-        if: ${{ github.event_name == 'pull_request_target' }}
+      - name: Determine if pr_or_branch is a PR number
+        id: check_pr
         run: |
-          git fetch origin pull/${{ github.event.number }}/head:pr-${{ github.event.number }}
-          git checkout pr-${{ github.event.number }}
+          PR_OR_BRANCH=${{ github.event.inputs.pr_or_branch || 'main' }} # Default to 'main' if not set
+          if [[ "$PR_OR_BRANCH" =~ ^[0-9]+$ ]]; then
+            echo "is_pr=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_pr=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "pr_or_branch=$PR_OR_BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Add comment to PR
+        if: steps.check_pr.outputs.is_pr == 'true'
+        run: |
+          gh pr comment "${{ steps.check_pr.outputs.pr_or_branch }}" -b "${{ github.workflow }} workflow launched on this PR: [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch and checkout PR
+        if: steps.check_pr.outputs.is_pr == 'true'
+        run: |
+          gh pr checkout ${{ steps.check_pr.outputs.pr_or_branch }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout branch
+        if: steps.check_pr.outputs.is_pr == 'false'
+        run: |
+          git checkout ${{ steps.check_pr.outputs.pr_or_branch }}
 
       - name: Install ilab
         run: |
@@ -178,6 +208,20 @@ jobs:
         if: always()
         run: |
           df -h
+
+      - name: Add comment to PR if the workflow failed
+        if: failure() && steps.check_pr.outputs.is_pr == 'true'
+        run: |
+          gh pr comment "${{ steps.check_pr.outputs.pr_or_branch }}" -b "e2e workflow failed on this PR: [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}), please investigate."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add comment to PR if the workflow succeeded
+        if: success() && steps.check_pr.outputs.is_pr == 'true'
+        run: |
+          gh pr comment "${{ steps.check_pr.outputs.pr_or_branch }}" -b "e2e workflow succeeded on this PR: [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}), congrats!"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   stop-small-ec2-runner:
     needs:

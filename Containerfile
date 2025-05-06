@@ -242,4 +242,25 @@ ENV CPLUS_INCLUDE_PATH="${PYTORCH_VISION_HOME}/include:${CPLUS_INCLUDE_PATH}"
 ENV CMAKE_INCLUDE_PATH="${PYTORCH_VISION_HOME}/include:${CMAKE_INCLUDE_PATH}"
 
 WORKDIR /instructlab
-ENTRYPOINT ["/bin/bash"]
+
+RUN dnf install -y nss_wrapper gettext tar gzip unzip git dnsutils skopeo wget iputils nmap-ncat screen btop
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" ; \
+    unzip awscliv2.zip ; \
+    mkdir ~/.aws ; \
+    chmod 777 ~/.aws ; \
+    ./aws/install
+
+RUN curl https://rclone.org/install.sh | bash ; \
+    mkdir -p ~/.config ; \
+    mkdir -p ~/.config/rclone ; \
+    touch ~/.config/rclone/rclone.conf
+
+RUN curl -L -s \
+    https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.16.8/openshift-client-linux-4.16.8.tar.gz \
+    | tar -C /usr/local/bin/ -zxv oc kubectl ; \
+    chmod +x /usr/local/bin/oc ; \
+    chmod +x /usr/local/bin/kubectl
+
+# ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/sh", "-c", "--" , "while true; do sleep 30; done;"]
